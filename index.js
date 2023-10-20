@@ -28,9 +28,7 @@ async function run() {
     await client.connect();
 
     const productsCollection = client.db('productsDB').collection('products');
-
-
-
+    const cartCollection = client.db('productsDB').collection('cartInfo');
 
 
     app.post('/products',async(req,res)=>{
@@ -47,11 +45,6 @@ async function run() {
         res.send(result);
     });
 
-    // app.get('/products/:brand',async(req,res)=>{
-    //     const brandName = productsCollection.find({ brand:req.params.brand });
-    //     const result= await brandName.toArray();
-    //     res.send(result);
-    // })
 
     app.get('/products/:id', async(req,res)=>{
         const id = req.params.id;
@@ -77,9 +70,50 @@ async function run() {
         }
         const result = await productsCollection.updateOne(filter,product, options)
         res.send(result);
+    });
+
+
+
+
+    // cart related api
+    app.post('/cartInfo',async(req,res)=>{
+        const newCart = req.body;
+        const result = await cartCollection.insertOne(newCart);
+        res.send(result);
+    });
+
+
+    app.get('/cartInfo', async(req,res)=>{
+        const cursor =cartCollection.find();
+        const result = await cursor.toArray();
+        res.send(result);
+    });
+
+
+    app.delete('/cartInfo/:id',async(req,res)=>{
+        const idName = req.params.id;        
+        const query = {_id: new ObjectId(idName)}
+        const result = await cartCollection.deleteOne(query);
+        res.send(result);
     })
 
-
+    // app.delete('/cartInfo/:id', async (req, res) => {
+    //     const idName = req.params.id;
+    
+    //     try {
+    //         const query = { _id: new ObjectId(idName) };
+    //         const result = await cartCollection.deleteOne(query);
+    
+    //         if (result.deletedCount === 1) {
+    //             res.status(200).send('Document deleted successfully.');
+    //         } else {
+    //             res.status(404).send('Document not found or not deleted.');
+    //         }
+    //     } catch (error) {
+    //         console.error('Error deleting document:', error);
+    //         res.status(500).send('An error occurred during the delete operation.');
+    //     }
+    // });
 
 
     // Send a ping to confirm a successful connection
