@@ -82,39 +82,19 @@ async function run() {
         res.send(result);
     });
 
-
-    app.get('/cartInfo', async(req,res)=>{
-        const cursor =cartCollection.find();
+    
+    app.get('/cartInfoDelete', async(req,res)=>{
+        const cursor = cartCollection.find();
         const result = await cursor.toArray();
         res.send(result);
     });
 
-
-    app.delete('/cartInfo/:id',async(req,res)=>{
-        const idName = req.params.id;        
-        const query = {_id: new ObjectId(idName)}
+    app.delete('/cartInfoDelete/:id',async(req,res)=>{
+        const id = req.params.id;        
+        const query = {_id: (id)}
         const result = await cartCollection.deleteOne(query);
         res.send(result);
     })
-
-    // app.delete('/cartInfo/:id', async (req, res) => {
-    //     const idName = req.params.id;
-    
-    //     try {
-    //         const query = { _id: new ObjectId(idName) };
-    //         const result = await cartCollection.deleteOne(query);
-    
-    //         if (result.deletedCount === 1) {
-    //             res.status(200).send('Document deleted successfully.');
-    //         } else {
-    //             res.status(404).send('Document not found or not deleted.');
-    //         }
-    //     } catch (error) {
-    //         console.error('Error deleting document:', error);
-    //         res.status(500).send('An error occurred during the delete operation.');
-    //     }
-    // });
-
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
